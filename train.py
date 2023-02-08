@@ -31,11 +31,11 @@ def main():
         transforms.RandomResizedCrop(size=32),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
-        transforms.Normalize(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     )
     val_trans = transforms.Compose(
         transforms.ToTensor(),
-        transforms.Normalize(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     )
     
     train_set = datasets.CIFAR10("data/cifar10", train=True, download=True, transform=train_trans)
