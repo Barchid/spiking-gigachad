@@ -4,7 +4,26 @@ import torch.nn.functional as F
 import torch.optim as optim
 from .base_layers import ConvBnSpike, ConvSpike, LinearSpike
 from spikingjelly.clock_driven import surrogate, neuron, functional, layer
-from pl_bolts.models.autoencoders.components import resize_conv3x3
+
+def conv3x3(in_planes, out_planes, stride=1):
+    """3x3 convolution with padding."""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+
+class Interpolate(nn.Module):
+    """nn.Module wrapper for F.interpolate."""
+
+    def __init__(self, size=None, scale_factor=None):
+        super().__init__()
+        self.size, self.scale_factor = size, scale_factor
+
+    def forward(self, x):
+        return F.interpolate(x, size=self.size, scale_factor=self.scale_factor)
+
+def resize_conv3x3(in_planes, out_planes, scale=1):
+    """upsample + 3x3 convolution with padding to avoid checkerboard artifact."""
+    if scale == 1:
+        return conv3x3(in_planes, out_planes)
+    return nn.Sequential(Interpolate(scale_factor=scale), conv3x3(in_planes, out_planes))
 
 class AutoEncoderSNN(nn.Module):
     """"""
