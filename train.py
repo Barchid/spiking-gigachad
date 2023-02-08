@@ -28,7 +28,7 @@ def main():
     )
 
     train_trans = transforms.Compose(
-        transforms.RandomSizedCrop(),
+        transforms.RandomResizedCrop(),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(),
