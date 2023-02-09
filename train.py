@@ -12,8 +12,7 @@ from project.autoencoder_module import AutoEncoderModule
 from project.models.autoencoder import AutoEncoderANN, AutoEncoderSNN
 from torchvision import datasets, transforms
 
-name = "autoencoder_snn"
-batch_size = 500
+# name = "autoencoder_snn"
 dataset = "cifar10"
 
 def main(
@@ -23,14 +22,16 @@ def main(
     # seeds the random from numpy, pytorch, etc for reproductibility
     pl.seed_everything(1234)
 
-    train_loader, val_loader = get_dataset(dataset=dataset)
-
-    trainer = create_trainer()
+    trainer = create_trainer(name)
     
     if "dvs" in dataset:
         in_channels = 2
+        batch_size = 128
     else:
         in_channels = 3
+        batch_size = 500
+        
+    train_loader, val_loader = get_dataset(dataset=dataset, batch_size=batch_size)
     
     if "snn" in name:
         model = AutoEncoderSNN(in_channels=in_channels)
@@ -54,7 +55,7 @@ def main(
     report.close()
 
 
-def create_trainer() -> pl.Trainer:
+def create_trainer(name) -> pl.Trainer:
     # saves the best model checkpoint based on the accuracy in the validation set
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         monitor="val_loss",  # TODO: select the logged metric to monitor the checkpoint saving
@@ -76,7 +77,7 @@ def create_trainer() -> pl.Trainer:
     return trainer
 
 
-def get_dataset(dataset='cifar10'):
+def get_dataset(dataset='cifar10', batch_size=128):
     if dataset == "cifar10":
         trainx = torch.load('cifar10_trainx.pt')
         trainy = torch.load('cifar10_trainy.pt')
