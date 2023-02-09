@@ -28,7 +28,6 @@ class Transform(nn.Module):
         super(Transform, self).__init__()
         self.trans = transforms.Compose(
             [
-                transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomErasing(),
             ]
@@ -38,6 +37,7 @@ class Transform(nn.Module):
 
     def forward(self, input: torch.Tensor):
         # B, C,H,W
+        input = input / 255
         input = self.trans(input)
         input = self.code(input)  # btchw
         return input
