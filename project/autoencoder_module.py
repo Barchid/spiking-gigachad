@@ -16,20 +16,17 @@ class AutoEncoderModule(pl.LightningModule):
     def __init__(self, model, learning_rate: float=0.001, timesteps: int = 15, dataset="cifar10", **kwargs):
         super().__init__()
         self.save_hyperparameters()
+        self.dataset = dataset
+        self.transform = Transform(dataset=dataset)
 
-        if "dvs" not in dataset:
-            self.transform = Transform()
-        else:
-            self.transform = torch.nn.Identity()
             
         self.model = model
 
-    def forward(self, x): # x = (BCHW)
+    def forward(self, x): # x = (BCHW) or (TBCHW)
         x = self.transform(x) # (TBCHW)
         
-        x = self.model(x)
+        x = self.model(x) # BCHW
 
-        x = x.mean(0) # (BCHW)
         return x
 
     def training_step(self, batch, batch_idx):

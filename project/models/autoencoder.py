@@ -25,6 +25,24 @@ def resize_conv3x3(in_planes, out_planes, scale=1):
         return conv3x3(in_planes, out_planes)
     return nn.Sequential(Interpolate(scale_factor=scale), conv3x3(in_planes, out_planes))
 
+def get_decoder(in_channels: int):
+    return nn.Sequential(
+        nn.Linear(2500, 1250),
+        Interpolate(size=(16, 16)),
+        nn.Sequential(
+            nn.Conv2d(50, 25, 3, padding=1, bias=False),
+            nn.BatchNorm2d(25),
+            nn.ReLU()
+        ),
+        Interpolate(size=(32,32)),
+        nn.Sequential(
+            nn.Conv2d(25, 12, 3, padding=1, bias=False),
+            nn.BatchNorm2d(2),
+            nn.ReLU()
+        ),
+        nn.Conv2d(12, in_channels, kernel_size=1, bias=False)
+    )
+
 class AutoEncoderSNN(nn.Module):
     """"""
 
@@ -38,16 +56,26 @@ class AutoEncoderSNN(nn.Module):
         self.pool2 = layer.SeqToANNContainer(nn.MaxPool2d((3, 3), stride=3))
 
         self.flat = nn.Flatten(start_dim=2)
+        
+        # decoder
+        self.latent_fc = nn.Linear(2500, 1250)
+        self.upscale1 = Interpolate(size=(16, 16))
+        self.dec1 = nn.Sequential(
+            nn.Conv2d(50, 25, 3, padding=1, bias=False),
+            nn.BatchNorm2d(25),
+            nn.ReLU()
+        )
+        
+        self.upscale2 = Interpolate(size=(32,32))
+        self.dec2 = nn.Sequential(
+            nn.Conv2d(25, 12, 3, padding=1, bias=False),
+            nn.BatchNorm2d(2),
+            nn.ReLU()
+        )
+        self.convdec = nn.Conv2d(12, in_channels, kernel_size=1, bias=False)
+        
 
-    def forward(self, x):
-        """
-
-        Args:
-            x (torch.Tensor): input tensor of dimension (T, B, C, H, W).
-
-        Returns:
-            torch.Tensor: Tensor (of logits) of dimension (B, num_classes)
-        """
+    def forward(self, x: torch.Tensor):
         functional.reset_net(self)
 
         x = self.conv1(x)
@@ -55,7 +83,17 @@ class AutoEncoderSNN(nn.Module):
         x = self.conv2(x)
         x = self.pool2(x)
         x = self.flat(x)
+        
+        x = x.mean(0) # B,C,H,W
 
+        # decoder
+        x = self.latent_fc(x)
+        x = x.view(x.shape[0], 50, 5, 5) # (B, 50, 5, 5)
+        x = self.upscale1(x) # (B, 50, 16, 16)
+        x = self.dec1(x)
+        x = self.upscale2(x)
+        x = self.dec2(x)
+        x = self.convdec(x)
         print(x.shape)
         exit()
         return x

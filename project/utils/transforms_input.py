@@ -24,20 +24,27 @@ class TrainableCoding(nn.Module):
 
 
 class Transform(nn.Module):
-    def __init__(self) -> None:
+    def __init__(self, dataset: str = "cifar10") -> None:
         super(Transform, self).__init__()
+        self.dataset = dataset
+        
         self.trans = transforms.Compose(
             [
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomErasing(),
             ]
         )
-
-        self.code = TrainableCoding()
+        if "dvs" in dataset:
+            self.code = nn.Identity()
+        else:
+            self.code = TrainableCoding()
 
     def forward(self, input: torch.Tensor):
         # B, C,H,W
-        input = input / 255
+        if "dvs" in self.dataset:
+            input = input.to(torch.float)
+        else:
+            input = input / 255
         input = self.trans(input)
         input = self.code(input)  # btchw
         return input
