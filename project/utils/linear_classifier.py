@@ -9,11 +9,14 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 def Total(encoder, transform, dataset):
     with torch.no_grad():
         data_total, target_total = [], []
+        i = 0
         for data, target in dataset:
+            print(i)
             data = transform(data).to(device)
             feats = encoder(data).cpu()
             data_total.append(feats)
             target_total.append(target)
+            i+=1
     return torch.cat(data_total), torch.cat(target_total)
 
 
