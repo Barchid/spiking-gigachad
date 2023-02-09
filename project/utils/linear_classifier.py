@@ -11,8 +11,8 @@ def Total(encoder, transform, dataset):
         data_total, target_total = [], []
         for data, target in dataset:
             data = transform(data)
-            inp = encoder()
-            data_total.append(encoder(data).cpu())
+            feats = encoder(data).cpu()
+            data_total.append(feats)
             target_total.append(target)
     return torch.cat(data_total), torch.cat(target_total)
 
