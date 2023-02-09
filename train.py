@@ -63,7 +63,7 @@ def create_trainer() -> pl.Trainer:
     
     # create trainer
     trainer = pl.Trainer(
-        max_epochs=200,
+        max_epochs=50,
         gpus=torch.cuda.device_count(),
         callbacks=[checkpoint_callback],
         logger=pl.loggers.TensorBoardLogger("experiments", name=f"{name}_{dataset}"),
