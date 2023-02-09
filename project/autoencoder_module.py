@@ -35,10 +35,16 @@ class AutoEncoderModule(pl.LightningModule):
     def forward(self, x):  # x = (BCHW) or (TBCHW)
         x = self.transform(x)  # (TBCHW)
 
-        if self.is_ann or "dvs" not in self.dataset:
+        if self.is_ann:
             x = x.sum(0) / 15.0
 
         x_hat = self.model(x)  # BCHW
+        
+        if "dvs" in self.dataset:
+            x = x.mean(0)
+        else:
+            if not self.is_ann:
+                x = x.sum(0) / 15.0
 
         return x_hat, x
 
