@@ -22,14 +22,20 @@ def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
     pl.seed_everything(1234)
     
-    module = AutoEncoderModule.load_from_checkpoint(ckpt)
-
-    train_loader, val_loader = get_dataset(dataset=module.dataset)
-
+    module = AutoEncoderModule.load_from_checkpoint(ckpt, model=None, strict=False)
+    
     if "dvs" in module.dataset:
         in_channels = 2
     else:
         in_channels = 3
+    
+    print("\n\nREAL CHECKPOINT LOAD")
+    if module.is_ann:
+        module = AutoEncoderModule.load_from_checkpoint(ckpt, model=AutoEncoderANN(in_channels), strict=False)
+    else:
+        module = AutoEncoderModule.load_from_checkpoint(ckpt, model=AutoEncoderSNN(in_channels), strict=False)
+        
+    train_loader, val_loader = get_dataset(dataset=module.dataset)
     
     # if "snn" in name:
     #     model = AutoEncoderSNN(in_channels=in_channels)
