@@ -57,22 +57,23 @@ class AutoEncoderSNN(nn.Module):
 
         self.flat = nn.Flatten(start_dim=2)
         
-        # decoder
-        self.latent_fc = nn.Linear(2500, 1250)
-        self.upscale1 = Interpolate(size=(16, 16))
-        self.dec1 = nn.Sequential(
-            nn.Conv2d(50, 25, 3, padding=1, bias=False),
-            nn.BatchNorm2d(25),
-            nn.ReLU()
-        )
+        self.decoder = get_decoder(in_channels)
+        # # decoder
+        # self.latent_fc = nn.Linear(2500, 1250)
+        # self.upscale1 = Interpolate(size=(16, 16))
+        # self.dec1 = nn.Sequential(
+        #     nn.Conv2d(50, 25, 3, padding=1, bias=False),
+        #     nn.BatchNorm2d(25),
+        #     nn.ReLU()
+        # )
         
-        self.upscale2 = Interpolate(size=(32,32))
-        self.dec2 = nn.Sequential(
-            nn.Conv2d(25, 12, 3, padding=1, bias=False),
-            nn.BatchNorm2d(12),
-            nn.ReLU()
-        )
-        self.convdec = nn.Conv2d(12, in_channels, kernel_size=1, bias=False)
+        # self.upscale2 = Interpolate(size=(32,32))
+        # self.dec2 = nn.Sequential(
+        #     nn.Conv2d(25, 12, 3, padding=1, bias=False),
+        #     nn.BatchNorm2d(12),
+        #     nn.ReLU()
+        # )
+        # self.convdec = nn.Conv2d(12, in_channels, kernel_size=1, bias=False)
         
 
     def forward(self, x: torch.Tensor):
@@ -86,14 +87,16 @@ class AutoEncoderSNN(nn.Module):
         
         x = x.mean(0) # B,C,H,W
 
-        # decoder
-        x = self.latent_fc(x)
-        x = x.view(x.shape[0], 50, 5, 5) # (B, 50, 5, 5)
-        x = self.upscale1(x) # (B, 50, 16, 16)
-        x = self.dec1(x)
-        x = self.upscale2(x)
-        x = self.dec2(x)
-        x = self.convdec(x)
+        # # decoder
+        # x = self.latent_fc(x)
+        # x = x.view(x.shape[0], 50, 5, 5) # (B, 50, 5, 5)
+        # x = self.upscale1(x) # (B, 50, 16, 16)
+        # x = self.dec1(x)
+        # x = self.upscale2(x)
+        # x = self.dec2(x)
+        # x = self.convdec(x)
+        
+        x = self.decoder(x)
         print(x.shape)
         exit()
         return x
@@ -112,21 +115,24 @@ class AutoEncoderANN(nn.Module):
     """"""
 
     def __init__(
-        self, in_channels: int, neuron_model: str = "LIF"
+        self, in_channels: int
     ):
-        super(AutoEncoderSNN, self).__init__()
+        super(AutoEncoderANN, self).__init__()
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels, 50, 5, padding=2, bias=False),
-            nn.BatchNorm2d(50)
+            nn.BatchNorm2d(50),
+            nn.ReLU()
         )
         self.pool1 = nn.MaxPool2d((2, 2), stride=2)
         self.conv2 = nn.Sequential(
             nn.Conv2d(50, 100, 3, padding=1, bias=False),
-            nn.BatchNorm2d(100)
+            nn.BatchNorm2d(100),
+            nn.ReLU()
         )
         self.pool2 = nn.MaxPool2d((3, 3), stride=3)
         
         self.flat = nn.Flatten(start_dim=1)
+        self.decoder = get_decoder(in_channels)
 
     def forward(self, x):
         """
@@ -142,8 +148,6 @@ class AutoEncoderANN(nn.Module):
         x = self.conv2(x)
         x = self.pool2(x)
         x = self.flat(x)
-        print(x.shape)
-        exit()
         return x
     
     def get_encoder(self):

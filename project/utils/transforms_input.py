@@ -24,7 +24,7 @@ class TrainableCoding(nn.Module):
 
 
 class Transform(nn.Module):
-    def __init__(self, dataset: str = "cifar10") -> None:
+    def __init__(self, dataset: str = "cifar10", use_code: bool = True) -> None:
         super(Transform, self).__init__()
         self.dataset = dataset
         
@@ -34,7 +34,7 @@ class Transform(nn.Module):
                 transforms.RandomErasing(),
             ]
         )
-        if "dvs" in dataset:
+        if "dvs" in dataset or not use_code:
             self.code = nn.Identity()
         else:
             self.code = TrainableCoding()

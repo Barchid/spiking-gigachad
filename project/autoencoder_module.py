@@ -17,7 +17,7 @@ class AutoEncoderModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
         self.dataset = dataset
-        self.transform = Transform(dataset=dataset)
+        self.transform = Transform(dataset=dataset, use_code=type(model) == AutoEncoderSNN)
 
             
         self.model = model
