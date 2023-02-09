@@ -17,6 +17,7 @@ name = "autoencoder_snn"
 batch_size = 500
 dataset = "cifar10"
 ckpt = ""
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
@@ -43,7 +44,7 @@ def main():
     #     model = AutoEncoderANN(in_channels=in_channels)
 
     print(module.model)
-    encoder = module.model.get_encoder()
+    encoder = module.model.get_encoder().to(device)
     print(encoder)
     
     classification(encoder, module.transform, train_loader, val_loader, module.dataset, module.is_ann)
@@ -72,8 +73,8 @@ def get_dataset(dataset='cifar10'):
         testx = torch.load('dvsgesture_testx.pt')
         testy = torch.load('dvsgesture_testy.pt')
 
-        train = DataLoader(TensorDataset(trainx, trainy), batch_size=batch_size, num_workers=5)
-        test = DataLoader(TensorDataset(testx, testy), batch_size=batch_size, num_workers=2)
+        train = DataLoader(TensorDataset(trainx, trainy), batch_size=batch_size, num_workers=0)
+        test = DataLoader(TensorDataset(testx, testy), batch_size=batch_size, num_workers=0)
     return train, test
 
 
