@@ -13,7 +13,7 @@ from project.models.autoencoder import AutoEncoderANN, AutoEncoderSNN
 from torchvision import datasets, transforms
 
 # name = "autoencoder_snn"
-dataset = "cifar10"
+# dataset = "cifar10"
 
 def main(
     name,
@@ -22,7 +22,7 @@ def main(
     # seeds the random from numpy, pytorch, etc for reproductibility
     pl.seed_everything(1234)
 
-    trainer = create_trainer(name)
+    trainer = create_trainer(name, dataset=dataset)
     
     if "dvs" in dataset:
         in_channels = 2
@@ -55,7 +55,7 @@ def main(
     report.close()
 
 
-def create_trainer(name) -> pl.Trainer:
+def create_trainer(name, dataset) -> pl.Trainer:
     # saves the best model checkpoint based on the accuracy in the validation set
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         monitor="val_loss",  # TODO: select the logged metric to monitor the checkpoint saving
