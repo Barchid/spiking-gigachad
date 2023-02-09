@@ -13,7 +13,7 @@ from project.models.autoencoder import AutoEncoderANN, AutoEncoderSNN
 from torchvision import datasets, transforms
 
 name = "autoencoder_snn"
-batch_size = 128
+batch_size = 500
 dataset = "cifar10"
 
 def main():
@@ -49,10 +49,10 @@ def main():
 def create_trainer() -> pl.Trainer:
     # saves the best model checkpoint based on the accuracy in the validation set
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        monitor="val_loss",  # TODO: select the logged metric to monitor the checkpoint saving
-        filename="model-{epoch:03d}-{val_loss:.4f}",
+        monitor="linear_acc",  # TODO: select the logged metric to monitor the checkpoint saving
+        filename="model-{epoch:03d}-{linear_acc:.4f}",
         save_top_k=1,
-        mode="min",
+        mode="max",
     )
 
     

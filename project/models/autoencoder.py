@@ -32,6 +32,13 @@ class View2D(nn.Module):
     def forward(self, x):
         x = x.view(x.shape[0], 50, 5, 5) # (B, 50, 5, 5)
         return x
+    
+class MeanSpike(nn.Module):
+    def __init__(self):
+        super(MeanSpike, self).__init__()
+
+    def forward(self, x):
+        return x.mean(0)
 
 def get_decoder(in_channels: int):
     return nn.Sequential(
@@ -65,6 +72,7 @@ class AutoEncoderSNN(nn.Module):
         self.pool2 = layer.SeqToANNContainer(nn.MaxPool2d((3, 3), stride=3))
 
         self.flat = nn.Flatten(start_dim=2)
+        self.meanspike = MeanSpike()
         
         self.decoder = get_decoder(in_channels)
         # # decoder
@@ -94,7 +102,7 @@ class AutoEncoderSNN(nn.Module):
         x = self.pool2(x)
         x = self.flat(x)
         
-        x = x.mean(0) # B,C,H,W
+        x = self.meanspike(x) # B,C,H,W
 
         # # decoder
         # x = self.latent_fc(x)
@@ -114,7 +122,8 @@ class AutoEncoderSNN(nn.Module):
             self.pool1,
             self.conv2,
             self.pool2,
-            self.flat
+            self.flat,
+            self.meanspike
         )
 
 
