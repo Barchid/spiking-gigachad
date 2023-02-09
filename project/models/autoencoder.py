@@ -36,8 +36,8 @@ class View2D(nn.Module):
 def get_decoder(in_channels: int):
     return nn.Sequential(
         nn.Linear(2500, 1250),
-        Interpolate(size=(16, 16)),
         View2D(),
+        Interpolate(size=(16, 16)),
         nn.Sequential(
             nn.Conv2d(50, 25, 3, padding=1, bias=False),
             nn.BatchNorm2d(25),
