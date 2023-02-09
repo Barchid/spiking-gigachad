@@ -21,6 +21,7 @@ def main():
     pl.seed_everything(1234)
 
     train_loader, val_loader = get_dataset(dataset=dataset)
+    train_set, val_set = get_dataset(dataset=dataset)
 
     trainer = create_trainer()
     
@@ -37,8 +38,8 @@ def main():
     module = AutoEncoderModule(
         model=model,
         dataset=dataset,
-        train_set=train_loader,
-        val_set=val_loader
+        train_set=train_set,
+        val_set=val_set
     )
 
     trainer.fit(module, train_loader, val_loader)
