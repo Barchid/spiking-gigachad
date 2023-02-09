@@ -12,14 +12,14 @@ class TrainableCoding(nn.Module):
 
     def __init__(self):
         super(TrainableCoding, self).__init__()
-        self.conv = nn.Conv2d(3, 2, kernel_size=(5,5), padding=2, bias=False)
+        # self.conv = nn.Conv2d(3, 2, kernel_size=(5,5), padding=2, bias=False)
 
     def forward(self, x: torch.Tensor):
         # CHW
-        x = self.conv(x)
-        x.unsqueeze_(0)
-        x = x.repeat(15, 1, 1, 1, 1)
-        # x = spikegen.rate(x, 15)
+        # x = self.conv(x)
+        # x.unsqueeze_(0)
+        # x = x.repeat(15, 1, 1, 1, 1)
+        x = spikegen.rate(x, 15)
         return x
 
 
