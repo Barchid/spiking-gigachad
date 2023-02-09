@@ -65,7 +65,8 @@ class AutoEncoderSNN(nn.Module):
             self.conv1,
             self.pool1,
             self.conv2,
-            self.pool2
+            self.pool2,
+            self.flat
         )
 
 
