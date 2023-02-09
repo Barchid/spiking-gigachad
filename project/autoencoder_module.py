@@ -9,6 +9,7 @@ from spikingjelly.clock_driven import functional
 import torchmetrics
 
 from project.models.autoencoder import AutoEncoderSNN
+from project.utils.transforms_input import Transform
 
 
 class AutoEncoderModule(pl.LightningModule):
@@ -21,17 +22,15 @@ class AutoEncoderModule(pl.LightningModule):
         #     neuron_model=self.hparams.neuron_model,
         #     bias=self.hparams.bias
         # )
+        self.transform = Transform()
         self.model = model
 
-    def forward(self, x):
-        # Reshapes the input tensor from (B, T, C, H, W) to (T, B, C, H, W).
-        x = x.permute(1, 0, 2, 3, 4)
-
-        # (T, B, C, H, W) --> (T, B, C, H, W)
-        x = self.model(x)
+    def forward(self, x): # x = (BCHW)
+        x = self.transform(x) # (TBCHW)
         
-        x = x.permute(1, 0, 2, 3, 4) # BTCHW
+        x = self.model(x)
 
+        x = x.mean(0) # (BCHW)
         return x
 
     def training_step(self, batch, batch_idx):
