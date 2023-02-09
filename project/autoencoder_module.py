@@ -8,7 +8,7 @@ from torch.nn import functional as F
 from spikingjelly.clock_driven import functional
 import torchmetrics
 
-from project.models.autoencoder import AutoEncoderSNN
+from project.models.autoencoder import AutoEncoderANN
 from project.utils.transforms_input import Transform
 
 
@@ -17,7 +17,7 @@ class AutoEncoderModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
         self.dataset = dataset
-        self.is_ann = type(model) == AutoEncoderSNN
+        self.is_ann = type(model) == AutoEncoderANN
         self.transform = Transform(dataset=dataset, is_ann=self.is_ann)
 
             
