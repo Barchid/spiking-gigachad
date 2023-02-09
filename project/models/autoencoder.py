@@ -106,8 +106,6 @@ class AutoEncoderSNN(nn.Module):
         # x = self.convdec(x)
         
         x = self.decoder(x)
-        print(x.shape)
-        exit()
         return x
     
     def get_encoder(self):
@@ -157,6 +155,7 @@ class AutoEncoderANN(nn.Module):
         x = self.conv2(x)
         x = self.pool2(x)
         x = self.flat(x)
+        x = self.decoder(x)
         return x
     
     def get_encoder(self):
@@ -164,5 +163,6 @@ class AutoEncoderANN(nn.Module):
             self.conv1,
             self.pool1,
             self.conv2,
-            self.pool2
+            self.pool2,
+            self.flat
         )
