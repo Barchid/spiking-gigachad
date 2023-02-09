@@ -4,13 +4,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def Total(encoder, transform, dataset):
     with torch.no_grad():
         data_total, target_total = [], []
         for data, target in dataset:
-            data = transform(data)
+            data = transform(data).to(device)
             feats = encoder(data).cpu()
             data_total.append(feats)
             target_total.append(target)
