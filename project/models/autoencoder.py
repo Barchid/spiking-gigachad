@@ -35,9 +35,7 @@ class AutoEncoderSNN(nn.Module):
         self.conv1 = ConvBnSpike(in_channels, 50, kernel_size=5)
         self.pool1 = layer.SeqToANNContainer(nn.MaxPool2d((2, 2), stride=2))
         self.conv2 = ConvBnSpike(50, 100, kernel_size=3, neuron_model=neuron_model)
-        self.pool2 = layer.SeqToANNContainer(nn.MaxPool2d((2, 2), stride=2))
-        
-        self.conv3 = ConvBnSpike(100, 120, kernel_size=3, neuron_model=neuron_model, stride=2)
+        self.pool2 = layer.SeqToANNContainer(nn.MaxPool2d((3, 3), stride=3))
 
         self.flat = nn.Flatten(start_dim=2)
 
@@ -56,7 +54,6 @@ class AutoEncoderSNN(nn.Module):
         x = self.pool1(x)
         x = self.conv2(x)
         x = self.pool2(x)
-        x = self.conv3(x)
         x = self.flat(x)
 
         print(x.shape)
