@@ -13,6 +13,7 @@ from project.models.autoencoder import AutoEncoderANN, AutoEncoderSNN
 from torchvision import datasets, transforms
 
 name = "autoencoder_snn"
+batch_size = 128
 
 def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
@@ -87,6 +88,33 @@ def create_trainer() -> pl.Trainer:
     )
     return trainer
 
+
+def get_dataset(dataset='cifar10'):
+    if dataset == "cifar10":
+        trainx = torch.load('cifar10_trainx.pt')
+        trainy = torch.load('cifar10_trainy.pt')
+        testx = torch.load('cifar10_testx.pt')
+        testy = torch.load('cifar10_testy.pt')
+
+        train = DataLoader(TensorDataset(trainx, trainy), batch_size=batch_size)
+        test = DataLoader(TensorDataset(testx, testy), batch_size=batch_size)
+    elif dataset == 'cifar10_whitening':
+        trainx = torch.load('cifar10_trainx_whitening.pt')
+        trainy = torch.load('cifar10_trainy_whitening.pt')
+        testx = torch.load('cifar10_testx_whitening.pt')
+        testy = torch.load('cifar10_testy_whitening.pt')
+
+        train = DataLoader(TensorDataset(trainx, trainy), batch_size=batch_size)
+        test = DataLoader(TensorDataset(testx, testy), batch_size=batch_size)
+    elif dataset == "dvsgesture":
+        trainx = torch.load('dvsgesture_trainx.pt')
+        trainy = torch.load('dvsgesture_trainy.pt')
+        testx = torch.load('dvsgesture_testx.pt')
+        testy = torch.load('dvsgesture_testy.pt')
+
+        train = DataLoader(TensorDataset(trainx, trainy), batch_size=batch_size)
+        test = DataLoader(TensorDataset(testx, testy), batch_size=batch_size)
+    return train, test
 
 
 if __name__ == "__main__":

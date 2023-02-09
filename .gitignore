@@ -132,3 +132,5 @@ data/*
 experiments/*
 !experiments/.gitkeep
 try.py
+
+*.pt
