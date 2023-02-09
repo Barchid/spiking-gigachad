@@ -32,8 +32,8 @@ def main():
     module = AutoEncoderModule(
         model=model,
         dataset=dataset,
-        train_set=train_loader.dataset,
-        val_set=val_loader.dataset
+        train_set=train_loader,
+        val_set=val_loader
     )
 
     trainer.fit(module, train_loader, val_loader)
