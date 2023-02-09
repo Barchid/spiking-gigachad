@@ -26,7 +26,7 @@ class AutoEncoderModule(pl.LightningModule):
         **kwargs
     ):
         super().__init__()
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=["model"])
         self.dataset = dataset
         self.train_set = train_set
         self.val_set = val_set
