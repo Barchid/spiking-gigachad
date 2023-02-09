@@ -16,7 +16,10 @@ name = "autoencoder_snn"
 batch_size = 500
 dataset = "cifar10"
 
-def main():
+def main(
+    name,
+    dataset
+):
     # seeds the random from numpy, pytorch, etc for reproductibility
     pl.seed_everything(1234)
 
@@ -102,4 +105,7 @@ def get_dataset(dataset='cifar10'):
 
 
 if __name__ == "__main__":
-    main()
+    main("snn", "cifar10")
+    main("snn", "dvsgesture")
+    main("ann", "cifar10")
+    main("ann", "dvsgesture")
