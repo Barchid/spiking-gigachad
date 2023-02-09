@@ -76,5 +76,5 @@ class AutoEncoderModule(pl.LightningModule):
         return torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
 
     def on_validation_epoch_end(self) -> None:
-        accuracy = classification(self.model.get_encoder(), self.transform, self.train_set, self.val_set, self.dataset)
+        accuracy = classification(self.model.get_encoder(), self.transform, self.train_set, self.val_set, self.dataset, self.is_ann)
         self.log('linear_acc', accuracy, prog_bar=True, on_step=False, on_epoch=True)
