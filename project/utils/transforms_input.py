@@ -30,8 +30,8 @@ class Transform(nn.Module):
         self.is_ann = is_ann
         self.trans = transforms.Compose(
             [
-                transforms.RandomHorizontalFlip(),
-                # transforms.RandomErasing(),
+                # transforms.RandomHorizontalFlip(),
+                transforms.RandomErasing(),
             ]
         )
         if "dvs" in dataset:
@@ -41,10 +41,6 @@ class Transform(nn.Module):
 
     def forward(self, input: torch.Tensor):
         # B, C,H,W
-        if "dvs" in self.dataset:
-            input = input.to(torch.float)
-        else:
-            input = input / 255
         input = self.trans(input)
         input = self.code(input)  # tbchw
         return input

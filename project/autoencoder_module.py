@@ -33,7 +33,13 @@ class AutoEncoderModule(pl.LightningModule):
         self.model: Union[AutoEncoderANN, AutoEncoderSNN] = model
 
     def forward(self, x):  # x = (BCHW) or (TBCHW)
-        x = self.transform(x)  # (TBCHW)
+        input = x
+        if "dvs" in self.dataset:
+            input = input.to(torch.float)
+        else:
+            input = input / 255
+            
+        x = self.transform(input)  # (TBCHW)
 
         if self.is_ann:
             x = x.sum(0) / 15.0
@@ -41,12 +47,9 @@ class AutoEncoderModule(pl.LightningModule):
         x_hat = self.model(x)  # BCHW
         
         if "dvs" in self.dataset:
-            x = x.mean(0)
-        else:
-            if not self.is_ann:
-                x = x.sum(0) / 15.0
+            input = input.mean(0)
 
-        return x_hat, x
+        return x_hat, input
 
     def training_step(self, batch, batch_idx):
         x, _ = batch
