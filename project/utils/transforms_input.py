@@ -24,17 +24,17 @@ class TrainableCoding(nn.Module):
 
 
 class Transform(nn.Module):
-    def __init__(self, dataset: str = "cifar10", use_code: bool = True) -> None:
+    def __init__(self, dataset: str = "cifar10", is_ann: bool = True) -> None:
         super(Transform, self).__init__()
         self.dataset = dataset
-        
+        self.is_ann = is_ann
         self.trans = transforms.Compose(
             [
                 transforms.RandomHorizontalFlip(),
-                transforms.RandomErasing(),
+                # transforms.RandomErasing(),
             ]
         )
-        if "dvs" in dataset or not use_code:
+        if "dvs" in dataset:
             self.code = nn.Identity()
         else:
             self.code = TrainableCoding()
@@ -46,5 +46,5 @@ class Transform(nn.Module):
         else:
             input = input / 255
         input = self.trans(input)
-        input = self.code(input)  # btchw
+        input = self.code(input)  # tbchw
         return input

@@ -17,7 +17,8 @@ class AutoEncoderModule(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
         self.dataset = dataset
-        self.transform = Transform(dataset=dataset, use_code=type(model) == AutoEncoderSNN)
+        self.is_ann = type(model) == AutoEncoderSNN
+        self.transform = Transform(dataset=dataset, is_ann=self.is_ann)
 
             
         self.model = model
@@ -25,13 +26,17 @@ class AutoEncoderModule(pl.LightningModule):
     def forward(self, x): # x = (BCHW) or (TBCHW)
         x = self.transform(x) # (TBCHW)
         
-        x = self.model(x) # BCHW
+        if self.is_ann:
+            x = x.sum(0) / 15.
+        
+        x_hat = self.model(x) # BCHW
 
-        return x
+        return x_hat, x
 
     def training_step(self, batch, batch_idx):
         x, _ = batch
-        x_hat = self(x)
+        x_hat, x = self(x)
+        
         loss = F.mse_loss(x_hat, x, reduction="mean")
 
         self.log('train_loss', loss, on_epoch=True, prog_bar=True)
@@ -39,7 +44,8 @@ class AutoEncoderModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, _ = batch
-        x_hat = self(x)
+        x_hat, x = self(x)
+        
         loss = F.mse_loss(x_hat, x, reduction="mean")
 
         self.log('val_loss', loss, on_epoch=True, prog_bar=True)
@@ -47,10 +53,11 @@ class AutoEncoderModule(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         x, _ = batch
-        x_hat = self(x)
+        x_hat, x = self(x)
+        
         loss = F.mse_loss(x_hat, x, reduction="mean")
 
-        self.log('test_loss', loss, on_epoch=True, prog_bar=False)
+        self.log('test_loss', loss, on_epoch=True, prog_bar=True)
         return loss
 
     def configure_optimizers(self):

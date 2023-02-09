@@ -150,11 +150,13 @@ class AutoEncoderANN(nn.Module):
         Returns:
             torch.Tensor: Tensor (of logits) of dimension (B, num_classes)
         """
+        
         x = self.conv1(x)
         x = self.pool1(x)
         x = self.conv2(x)
         x = self.pool2(x)
         x = self.flat(x)
+                
         x = self.decoder(x)
         return x
     
