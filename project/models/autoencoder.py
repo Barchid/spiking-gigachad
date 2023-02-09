@@ -85,12 +85,8 @@ class AutoEncoderANN(nn.Module):
             nn.Conv2d(50, 100, 3, padding=1, bias=False),
             nn.BatchNorm2d(100)
         )
-        self.pool2 = nn.MaxPool2d((2, 2), stride=2)
+        self.pool2 = nn.MaxPool2d((3, 3), stride=3)
         
-        self.conv3 = nn.Sequential(
-            nn.Conv2d(100, 120, 3, padding=1, bias=False, stride=2),
-            nn.BatchNorm2d(120)
-        )
         self.flat = nn.Flatten(start_dim=1)
 
     def forward(self, x):
@@ -107,7 +103,6 @@ class AutoEncoderANN(nn.Module):
         x = self.conv2(x)
         x = self.pool2(x)
         x = self.flat(x)
-        x = self.conv3(x)
         print(x.shape)
         exit()
         return x
