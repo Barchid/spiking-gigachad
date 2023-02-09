@@ -21,7 +21,6 @@ def main():
     pl.seed_everything(1234)
 
     train_loader, val_loader = get_dataset(dataset=dataset)
-    train_set, val_set = get_dataset(dataset=dataset)
 
     trainer = create_trainer()
     
@@ -38,8 +37,6 @@ def main():
     module = AutoEncoderModule(
         model=model,
         dataset=dataset,
-        train_set=train_set,
-        val_set=val_set
     )
 
     trainer.fit(module, train_loader, val_loader)
@@ -99,8 +96,8 @@ def get_dataset(dataset='cifar10'):
         testx = torch.load('dvsgesture_testx.pt')
         testy = torch.load('dvsgesture_testy.pt')
 
-        train = DataLoader(TensorDataset(trainx, trainy), batch_size=batch_size)
-        test = DataLoader(TensorDataset(testx, testy), batch_size=batch_size)
+        train = DataLoader(TensorDataset(trainx, trainy), batch_size=batch_size, num_workers=5)
+        test = DataLoader(TensorDataset(testx, testy), batch_size=batch_size, num_workers=2)
     return train, test
 
 

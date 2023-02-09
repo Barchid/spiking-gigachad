@@ -21,15 +21,12 @@ class AutoEncoderModule(pl.LightningModule):
         learning_rate: float = 0.001,
         timesteps: int = 15,
         dataset="cifar10",
-        train_set: DataLoader = None,
-        val_set: DataLoader = None,
         **kwargs
     ):
         super().__init__()
+        self.save_hyperparameters(ignore=["model"])
         self.learning_rate = learning_rate
         self.dataset = dataset
-        self.train_set = train_set
-        self.val_set = val_set
         self.is_ann = type(model) == AutoEncoderANN
         self.transform = Transform(dataset=dataset, is_ann=self.is_ann)
 
@@ -75,6 +72,6 @@ class AutoEncoderModule(pl.LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.learning_rate)
 
-    def on_validation_epoch_end(self) -> None:
-        accuracy = classification(self.model.get_encoder(), self.transform, self.train_set, self.val_set, self.dataset, self.is_ann)
-        self.log('linear_acc', accuracy, prog_bar=True, on_step=False, on_epoch=True)
+    # def on_validation_epoch_end(self) -> None:
+    #     accuracy = classification(self.model.get_encoder(), self.transform, self.train_set, self.val_set, self.dataset, self.is_ann)
+    #     self.log('linear_acc', accuracy, prog_bar=True, on_step=False, on_epoch=True)
