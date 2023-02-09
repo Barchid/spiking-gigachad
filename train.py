@@ -24,10 +24,15 @@ def main():
 
     trainer = create_trainer()
     
-    if "snn" in name:
-        model = AutoEncoderSNN(in_channels=3)
+    if "dvs" in dataset:
+        in_channels = 2
     else:
-        model = AutoEncoderANN(in_channels=3)
+        in_channels = 3
+    
+    if "snn" in name:
+        model = AutoEncoderSNN(in_channels=in_channels)
+    else:
+        model = AutoEncoderANN(in_channels=in_channels)
 
     module = AutoEncoderModule(
         model=model,
