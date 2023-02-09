@@ -54,10 +54,10 @@ def main():
 def create_trainer() -> pl.Trainer:
     # saves the best model checkpoint based on the accuracy in the validation set
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        monitor="linear_acc",  # TODO: select the logged metric to monitor the checkpoint saving
-        filename="model-{epoch:03d}-{linear_acc:.4f}",
+        monitor="val_loss",  # TODO: select the logged metric to monitor the checkpoint saving
+        filename="model-{epoch:03d}-{val_loss:.4f}",
         save_top_k=1,
-        mode="max",
+        mode="min",
     )
 
     
