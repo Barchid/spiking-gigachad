@@ -20,6 +20,10 @@ def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
     pl.seed_everything(1234)
 
+    train_loader, val_loader = get_dataset(dataset=dataset)
+
+    trainer = create_trainer()
+    
     if "snn" in name:
         model = AutoEncoderSNN(in_channels=3)
     else:
@@ -27,12 +31,10 @@ def main():
 
     module = AutoEncoderModule(
         model=model,
-        dataset=dataset
+        dataset=dataset,
+        train_set=train_loader.dataset,
+        val_set=val_loader.dataset
     )
-
-    train_loader, val_loader = get_dataset(dataset=dataset)
-
-    trainer = create_trainer()
 
     trainer.fit(module, train_loader, val_loader)
 
