@@ -25,10 +25,19 @@ def resize_conv3x3(in_planes, out_planes, scale=1):
         return conv3x3(in_planes, out_planes)
     return nn.Sequential(Interpolate(scale_factor=scale), conv3x3(in_planes, out_planes))
 
+class View2D(nn.Module):
+    def __init__(self):
+        super(View2D, self).__init__()
+
+    def forward(self, x):
+        x = x.view(x.shape[0], 50, 5, 5) # (B, 50, 5, 5)
+        return x
+
 def get_decoder(in_channels: int):
     return nn.Sequential(
         nn.Linear(2500, 1250),
         Interpolate(size=(16, 16)),
+        View2D(),
         nn.Sequential(
             nn.Conv2d(50, 25, 3, padding=1, bias=False),
             nn.BatchNorm2d(25),
