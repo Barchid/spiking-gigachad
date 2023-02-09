@@ -14,6 +14,7 @@ from torchvision import datasets, transforms
 
 name = "autoencoder_snn"
 batch_size = 128
+dataset = "cifar10"
 
 def main():
     # seeds the random from numpy, pytorch, etc for reproductibility
@@ -25,33 +26,11 @@ def main():
         model = AutoEncoderANN(in_channels=3)
 
     module = AutoEncoderModule(
-        model=model
+        model=model,
+        dataset=dataset
     )
 
-    train_trans = transforms.Compose([
-        transforms.RandomResizedCrop(size=32),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-    ])
-    val_trans = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-    ])
-    
-    train_set = datasets.CIFAR10("data/cifar10", train=True, download=True, transform=train_trans)
-    val_set = datasets.CIFAR10("data/cifar10", train=False, download=True, transform=val_trans)
-    train_loader = DataLoader(
-        train_set,
-        batch_size=128,
-        shuffle=True,
-    )
-    
-    val_loader = DataLoader(
-        val_set,
-        batch_size=128,
-        shuffle=False,
-    )
+    train_loader, val_loader = get_dataset(dataset=dataset)
 
     trainer = create_trainer()
 
@@ -70,7 +49,7 @@ def main():
 def create_trainer() -> pl.Trainer:
     # saves the best model checkpoint based on the accuracy in the validation set
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        monitor="val_acc",  # TODO: select the logged metric to monitor the checkpoint saving
+        monitor="val_loss",  # TODO: select the logged metric to monitor the checkpoint saving
         filename="model-{epoch:03d}-{val_loss:.4f}",
         save_top_k=1,
         mode="min",
@@ -82,8 +61,8 @@ def create_trainer() -> pl.Trainer:
         max_epochs=200,
         gpus=torch.cuda.device_count(),
         callbacks=[checkpoint_callback],
-        logger=pl.loggers.TensorBoardLogger("experiments", name=f"{name}"),
-        default_root_dir=f"experiments/{name}",
+        logger=pl.loggers.TensorBoardLogger("experiments", name=f"{name}_{dataset}"),
+        default_root_dir=f"experiments/{name}_{dataset}",
         precision=16,
     )
     return trainer

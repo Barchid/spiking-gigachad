@@ -13,16 +13,15 @@ from project.utils.transforms_input import Transform
 
 
 class AutoEncoderModule(pl.LightningModule):
-    def __init__(self, model, learning_rate: float=0.001, timesteps: int = 15, **kwargs):
+    def __init__(self, model, learning_rate: float=0.001, timesteps: int = 15, dataset="cifar10", **kwargs):
         super().__init__()
         self.save_hyperparameters()
 
-        # self.model = AutoEncoderSNN(
-        #     in_channels=2,
-        #     neuron_model=self.hparams.neuron_model,
-        #     bias=self.hparams.bias
-        # )
-        self.transform = Transform()
+        if "dvs" not in dataset:
+            self.transform = Transform()
+        else:
+            self.transform = torch.nn.Identity()
+            
         self.model = model
 
     def forward(self, x): # x = (BCHW)
