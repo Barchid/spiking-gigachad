@@ -69,7 +69,7 @@ class AutoEncoderSNN(nn.Module):
         self.upscale2 = Interpolate(size=(32,32))
         self.dec2 = nn.Sequential(
             nn.Conv2d(25, 12, 3, padding=1, bias=False),
-            nn.BatchNorm2d(2),
+            nn.BatchNorm2d(12),
             nn.ReLU()
         )
         self.convdec = nn.Conv2d(12, in_channels, kernel_size=1, bias=False)
