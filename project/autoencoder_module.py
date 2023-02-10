@@ -14,6 +14,7 @@ from project.utils.linear_classifier import classification
 from torch.utils.data import TensorDataset, DataLoader, Dataset
 from typing import Union
 
+
 class AutoEncoderModule(pl.LightningModule):
     def __init__(
         self,
@@ -38,16 +39,18 @@ class AutoEncoderModule(pl.LightningModule):
             input = input.to(torch.float)
         else:
             input = input / 255
-            
-        x = self.transform(input)  # (TBCHW)
+
+        x = self.transform(input)  # (BTCHW)
 
         if self.is_ann:
-            x = x.sum(0) / 15.0
+            x = x.sum(1) / 15.0  # BCHW for ANN
+        else:
+            x = x.permute(1, 0, 2, 3, 4)
 
         x_hat = self.model(x)  # BCHW
-        
+
         if "dvs" in self.dataset:
-            input = input.mean(0)
+            input = input.mean(1)
 
         return x_hat, input
 
