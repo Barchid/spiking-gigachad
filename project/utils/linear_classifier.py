@@ -6,13 +6,20 @@ import torch.nn.functional as F
 import torch.optim as optim
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-def Total(encoder, transform, dataset):
+def Total(encoder, dataset, dataset_name):
     with torch.no_grad():
         data_total, target_total = [], []
         i = 0
         for data, target in dataset:
-            print(i)
-            data = transform(data).to(device)
+            print(i, "/", len(dataset))
+            
+            if "dvs" in dataset_name:
+                data = data.to(torch.float)
+            else:
+                data = data / 255
+            
+            data = data.to(device)
+            
             feats = encoder(data).cpu()
             data_total.append(feats)
             target_total.append(target)
@@ -20,12 +27,12 @@ def Total(encoder, transform, dataset):
     return torch.cat(data_total), torch.cat(target_total)
 
 
-def classification(encoder, transform, train_set, val_set, dataset, is_ann):
+def classification(encoder, train_set, val_set, dataset, is_ann):
     print("Total features - TRAIN")
-    train_data, train_target = Total(encoder, transform, train_set)
+    train_data, train_target = Total(encoder, train_set, dataset)
 
     print("Total features - TEST")
-    test_data, test_target = Total(encoder, transform, val_set)
+    test_data, test_target = Total(encoder, val_set, dataset)
     print("Shape of test data:", test_data.shape)
     torch.save(test_data, f"experiments/features/{dataset}_{is_ann}.pt")
 

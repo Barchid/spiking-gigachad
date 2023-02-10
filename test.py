@@ -47,7 +47,7 @@ def main():
     encoder = module.model.get_encoder().to(device)
     print(encoder)
     
-    classification(encoder, module.transform, train_loader, val_loader, module.dataset, module.is_ann)
+    classification(encoder, train_loader, val_loader, module.dataset, module.is_ann)
 
 
 def get_dataset(dataset='cifar10'):
