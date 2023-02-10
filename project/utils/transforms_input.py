@@ -20,6 +20,7 @@ class TrainableCoding(nn.Module):
         # x.unsqueeze_(0)
         # x = x.repeat(15, 1, 1, 1, 1)
         x = spikegen.rate(x, 15)
+        x = x.permute(1, 0, 2, 3, 4)
         return x
 
 
