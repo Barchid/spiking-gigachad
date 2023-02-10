@@ -45,12 +45,15 @@ class AutoEncoderModule(pl.LightningModule):
         if self.is_ann:
             x = x.sum(1) / 15.0  # BCHW for ANN
         else:
-            x = x.permute(1, 0, 2, 3, 4)
+            x = x.permute(1, 0, 2, 3, 4) # TBCHW for SNN
 
         x_hat = self.model(x)  # BCHW
 
         if "dvs" in self.dataset:
-            input = input.mean(1)
+            input = input.sum(1) / 15.0 # BCHW of input dvs
+            
+        print(input.shape, x.shape, x_hat.shape)
+        exit()
 
         return x_hat, input
 

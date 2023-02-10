@@ -17,13 +17,16 @@ def Total(encoder, dataset, dataset_name, is_ann):
             print(i, "/", len(dataset))
 
             if "dvs" in dataset_name:
-                data = data.to(torch.float)
+                data = data.to(torch.float)  # BTCHW
             else:
-                data = data / 255
-                data = spikegen.rate(data, 15)
+                data = data / 255  # normalize
+                data = spikegen.rate(data, 15)  # TBCHW
+                data = data.permute(1, 0, 2, 3, 4) # BTCHW
 
             if is_ann:
-                data = data.sum(0) / 15.0
+                data = data.sum(1) / 15.0  # BCHW
+            else:
+                data = data.permute(1, 0, 2, 3, 4)  # BTCHW -> TBCHW
 
             data = data.to(device)
 
