@@ -17,6 +17,7 @@ name = "autoencoder_snn"
 batch_size = 500
 dataset = "cifar10"
 ckpt = ""
+is_ann = True
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def main():
@@ -31,7 +32,7 @@ def main():
         in_channels = 3
     
     print("\n\nREAL CHECKPOINT LOAD")
-    if module.is_ann:
+    if is_ann:
         module = AutoEncoderModule.load_from_checkpoint(ckpt, model=AutoEncoderANN(in_channels), strict=False)
     else:
         module = AutoEncoderModule.load_from_checkpoint(ckpt, model=AutoEncoderSNN(in_channels), strict=False)
@@ -43,7 +44,7 @@ def main():
     # else:
     #     model = AutoEncoderANN(in_channels=in_channels)
 
-    print(module.model)
+    # print(module.model)
     encoder = module.model.get_encoder().to(device)
     print(encoder)
     
