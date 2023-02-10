@@ -52,9 +52,6 @@ class AutoEncoderModule(pl.LightningModule):
         if "dvs" in self.dataset:
             input = input.sum(1) / 15.0 # BCHW of input dvs
             
-        print(input.shape, x.shape, x_hat.shape)
-        exit()
-
         return x_hat, input
 
     def training_step(self, batch, batch_idx):

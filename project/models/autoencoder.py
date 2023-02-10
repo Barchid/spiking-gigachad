@@ -103,7 +103,6 @@ class AutoEncoderSNN(nn.Module):
         x = self.flat(x)
         
         x = self.meanspike(x) # B,C,H,W
-        print("meanspike", x.shape, torch.unique(x))
 
         # # decoder
         # x = self.latent_fc(x)
@@ -115,7 +114,6 @@ class AutoEncoderSNN(nn.Module):
         # x = self.convdec(x)
         
         x = self.decoder(x)
-        print("decode", x.shape, torch.unique(x))
         return x
     
     def get_encoder(self):
