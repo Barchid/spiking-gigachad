@@ -46,7 +46,7 @@ def classification(encoder, train_set, val_set, dataset, is_ann, is_1layer, is_r
     print("Total features - TEST")
     test_data, test_target = Total(encoder, val_set, dataset, is_ann)
     print("Shape of test data:", test_data.shape)
-    torch.save(test_data, f"experiments/features/{dataset}_{is_ann}.pt")
+    torch.save(test_data, f"experiments/features/{dataset}_ann{is_ann}_1layer{is_1layer}_random{is_random}.pt")
 
     print("PCA")
     pca = PCA(n_components=200).fit(train_data, train_target)
