@@ -125,6 +125,14 @@ class AutoEncoderSNN(nn.Module):
             self.flat,
             self.meanspike
         )
+        
+    def get_encoder_1layer(self):
+        return nn.Sequential(
+            self.conv1,
+            self.pool1,
+            self.flat,
+            self.meanspike
+        )
 
 
 class AutoEncoderANN(nn.Module):
@@ -176,4 +184,11 @@ class AutoEncoderANN(nn.Module):
             self.conv2,
             self.pool2,
             self.flat
+        )
+        
+    def get_encoder_1layer(self):
+        return nn.Sequential(
+            self.conv1,
+            self.pool1,
+            self.flat,
         )

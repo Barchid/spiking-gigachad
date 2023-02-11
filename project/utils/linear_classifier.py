@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from spikingjelly.clock_driven import surrogate, neuron, functional, layer
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 from snntorch import spikegen
@@ -29,7 +30,8 @@ def Total(encoder, dataset, dataset_name, is_ann):
                 data = data.permute(1, 0, 2, 3, 4)  # BTCHW -> TBCHW
 
             data = data.to(device)
-
+            
+            functional.reset_net(encoder)
             feats = encoder(data).cpu()
             data_total.append(feats)
             target_total.append(target)
@@ -37,7 +39,7 @@ def Total(encoder, dataset, dataset_name, is_ann):
     return torch.cat(data_total), torch.cat(target_total)
 
 
-def classification(encoder, train_set, val_set, dataset, is_ann):
+def classification(encoder, train_set, val_set, dataset, is_ann, is_1layer, is_random):
     print("Total features - TRAIN")
     train_data, train_target = Total(encoder, train_set, dataset, is_ann)
 
@@ -55,7 +57,7 @@ def classification(encoder, train_set, val_set, dataset, is_ann):
     accuracy = (torch.tensor(target) == test_target).sum() / len(test_target)
     mess = f"Final Accuracy: {accuracy * 100 :.2f}%\n"
     print(mess)
-    with open(f"report_{dataset}_{is_ann}.txt", "a") as fp:
+    with open(f"report_{dataset}_ann{is_ann}_1layer{is_1layer}_random{is_random}.txt", "a") as fp:
         fp.write(f"==> DATA={dataset} IS_ANN={is_ann} ==> ")
         fp.write(mess)
         fp.flush()
