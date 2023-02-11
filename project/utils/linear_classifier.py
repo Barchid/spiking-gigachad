@@ -57,8 +57,8 @@ def classification(encoder, train_set, val_set, dataset, is_ann, is_1layer, is_r
     accuracy = (torch.tensor(target) == test_target).sum() / len(test_target)
     mess = f"Final Accuracy: {accuracy * 100 :.2f}%\n"
     print(mess)
-    with open(f"report_{dataset}_ann{is_ann}_1layer{is_1layer}_random{is_random}.txt", "a") as fp:
-        fp.write(f"==> DATA={dataset} IS_ANN={is_ann} ==> ")
+    with open(f"report.txt", "a") as fp:
+        fp.write(f"==> DATA={dataset} IS_ANN={is_ann} 1LAYER={is_1layer} RANDOM={is_random}==> ")
         fp.write(mess)
         fp.flush()
     return accuracy
