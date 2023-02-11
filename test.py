@@ -106,6 +106,99 @@ def get_dataset(dataset="cifar10"):
 
 
 if __name__ == "__main__":
+    ckpt = "experiments/ann_dvsgesture/version_0/checkpoints/model-epoch=197-val_loss=0.0029.ckpt"
+    is_ann = True
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=False
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=False
+    )
+
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=True
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=True
+    )
+    
+    ckpt = "experiments/snn_dvsgesture/version_0/checkpoints/model-epoch=197-val_loss=0.0031.ckpt"
+    is_ann = False
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=False
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=False
+    )
+
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=True
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=True
+    )
+    
+    
+    ckpt = "experiments/ann_cifar10/version_0/checkpoints/model-epoch=156-val_loss=0.0066.ckpt"
+    is_ann = True
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=False
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=False
+    )
+
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=True
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=True
+    )
+    
+    ckpt = "experiments/snn_cifar10/version_0/checkpoints/model-epoch=156-val_loss=0.0066.ckpt"
+    is_ann = False
     main(
         ckpt=ckpt,
         is_ann=is_ann,
