@@ -23,7 +23,12 @@ is_random = False
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def main():
+def main(
+    ckpt="",
+    is_ann=True,
+    is_1layer=False,
+    is_random=False
+):
     # seeds the random from numpy, pytorch, etc for reproductibility
     pl.seed_everything(1234)
 
@@ -101,4 +106,30 @@ def get_dataset(dataset="cifar10"):
 
 
 if __name__ == "__main__":
-    main()
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=False
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=False
+    )
+
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=False,
+        is_random=True
+    )
+    
+    main(
+        ckpt=ckpt,
+        is_ann=is_ann,
+        is_1layer=True,
+        is_random=True
+    )
